@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Before and After Widget</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        #content {
+            position: relative;
+            height: 100%;
+        }
+
+        #before-container {
+            height: 100%;
+            width: 100%;
+            background-position: center;
+            background-size: cover;
+        }
+
+        #after-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 50%;
+            background-position: left;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        #reveal-bar {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 10px;
+            background-color: #000;
+            z-index: 4;
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+</head>
+<body>
+    <div id="content">
+        <div id="before-container"></div>
+        <div id="after-container"></div>
+        <div id="reveal-bar"></div>
+    </div>
+    <script>// Espera a que se cargue el DOM antes de ejecutar la función
+        $(function () {
+            // Selección de elementos del DOM
+            const content = $("#content");
+            const beforeContainer = $("#before-container");
+            const afterContainer = $("#after-container");
+            const revealBar = $("#reveal-bar");
+            // Establecer las imágenes de fondo de los contenedores
+            beforeContainer.css("background-image", 'url("./assets/images/faces/pexels-daniel-xavier-1.jpg")');
+            afterContainer.css("background-image", 'url("./assets/images/faces/pexels-daniel-xavier-2.jpg")');
+            // Crear una nueva instancia de Hammer.js en el elemento content
+            const hammer = new Hammer(content[0]);
+            let distance = 0;
+            // Configurar el gesto de desplazamiento (pan) para que funcione en dirección horizontal
+            hammer.get('pan').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+            // Evento que se activa cuando comienza el desplazamiento (pan)
+            hammer.on("panstart", function (event) {
+                // Guardar la posición inicial de la barra de revelado
+                distance = parseFloat(revealBar.css("left"));
+            });
+            // Evento que se activa cuando el usuario está moviendo el dedo o el cursor durante el desplazamiento
+            hammer.on("panmove", function (event) {
+                // Calcular la posición actual de la barra de revelado
+                const currentPosition = distance + event.deltaX;
+                // Asegurar que la posición de la barra de revelado no se salga del área del contenido
+                let newPosition = currentPosition < 0 ? 0 : currentPosition;
+                newPosition = newPosition > content.width() - revealBar.width() ? content.width() - revealBar.width() : newPosition;
+                // Actualizar la posición de la barra de revelado y el ancho del contenedor afterContainer
+                afterContainer.css("width", newPosition + "px");
+                revealBar.css("left", newPosition + "px");
+            });
+            // Evento que se activa cuando el usuario termina el desplazamiento
+            hammer.on("panend", function (event) {
+                // Guardar la posición final de la barra de revelado
+                distance = parseFloat(revealBar.css("left"));
+            });
+        });
+    </script>
+</body>
+</html>
