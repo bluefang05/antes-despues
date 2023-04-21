@@ -8,6 +8,7 @@ $(function () {
     // Establecer las imágenes de fondo de los contenedores
     beforeContainer.css("background-image", 'url("./assets/images/faces/pexels-daniel-xavier-1.jpg")');
     afterContainer.css("background-image", 'url("./assets/images/faces/pexels-daniel-xavier-2.jpg")');
+    
     // Crear una nueva instancia de Hammer.js en el elemento content
     const hammer = new Hammer(content[0]);
     let distance = 0;
